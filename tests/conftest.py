@@ -4,6 +4,7 @@ import pytest
 from starlette.testclient import TestClient
 
 from src.task_manager import main
+from src.task_manager import storage
 
 
 @pytest.fixture
@@ -14,8 +15,8 @@ def client():
 
 @pytest.fixture(autouse=True)
 def clear_tasks():
-    main.tasks.clear()
-    main.task_last_id = count(1)
+    storage.tasks.clear()
+    storage.task_last_id = count(1)
 
 @pytest.fixture
 def old_task():
