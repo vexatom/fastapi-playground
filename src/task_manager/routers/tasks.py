@@ -1,23 +1,11 @@
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 
 from src.task_manager import storage
+from src.task_manager.schemas import Task, TaskCreate
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
-
-
-class Task(BaseModel):
-    id: int
-    title: str
-    description: str
-    priority: int
-
-class TaskCreate(BaseModel):
-    title: str
-    description: str
-    priority: int
 
 
 def _get_task(task_id: int) -> Task:

@@ -1,19 +1,9 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 
 from src.task_manager import storage
+from src.task_manager.schemas import Note, NoteCreate
 
 router = APIRouter(prefix='/notes', tags=['notes'])
-
-
-class Note(BaseModel):
-    id: int
-    title: str
-    description: str
-
-class NoteCreate(BaseModel):
-    title: str
-    description: str
 
 
 def _get_note(note_id: int) -> Note:
