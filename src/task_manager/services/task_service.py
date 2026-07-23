@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from src.task_manager.schemas import TaskCreate, Task
 from src.task_manager.repositories import task_repository
-from src.task_manager import storage
 
 
 def get_task(task_id: int) -> Task:
@@ -12,34 +11,20 @@ def get_task(task_id: int) -> Task:
 
 
 def create_task(task_create: TaskCreate) -> Task:
-    task = Task(
-        id=next(storage.task_last_id),
-        title=task_create.title,
-        description=task_create.description,
-        priority=task_create.priority
-    )
-    task_repository.add_task(task)
-    return task
+    return task_repository.add_task(task_create)
 
 
 def get_tasks(priority: int | None) -> list[Task]:
-    tasks = task_repository.get_list_tasks()
     if priority is None:
-        return tasks
-    else:
-        priority_tasks = [task for task in tasks if task.priority == priority]
-        return priority_tasks
+        return task_repository.get_all_tasks()
+    return task_repository.get_priority_tasks(priority)
 
 
 def update_task(task_id: int, task_create: TaskCreate) -> Task:
-    task = get_task(task_id)
-    task.title = task_create.title
-    task.description = task_create.description
-    task.priority = task_create.priority
-    return task
+    return task_repository.update_task(task_id, task_create)
 
 
 def delete_task(task_id: int) -> Task:
     task = get_task(task_id)
-    task_repository.delete_task(task)
+    task_repository.delete_task(task_id)
     return task
