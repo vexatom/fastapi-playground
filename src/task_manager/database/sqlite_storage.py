@@ -1,5 +1,7 @@
 import sqlite3 as sq
 
+from pathlib import Path
+
 from src.task_manager.schemas import TaskCreate, NoteCreate
 
 
@@ -32,6 +34,16 @@ class SQLiteDatabase:
                 description TEXT NOT NULL DEFAULT('')
             )''')
 
+            conn.commit()
+
+    def clear_tables(self, protection: bool = True) -> None:
+        if protection:
+            if Path(self.db_path).name != 'test.db':
+                raise Exception(f'Are you sure that you want to clear this database ({self.db_path})?')
+        with sq.connect(self.db_path) as conn:
+            cur = conn.cursor()
+            cur.execute('DELETE FROM tasks')
+            cur.execute('DELETE FROM notes')
             conn.commit()
 
     def get_all_tasks(self) -> list[tuple]:

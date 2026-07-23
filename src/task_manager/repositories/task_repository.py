@@ -1,7 +1,5 @@
-from src.task_manager.database import sqlite_storage
+from src.task_manager.database import connection
 from src.task_manager.schemas import Task, TaskCreate
-
-db = sqlite_storage.SQLiteDatabase('data.db')
 
 
 def _row_to_task(row) -> Task:
@@ -14,7 +12,7 @@ def _row_to_task(row) -> Task:
 
 
 def add_task(task_create: TaskCreate) -> None:
-    last_id = db.insert_task(task_create)
+    last_id = connection.db.insert_task(task_create)
 
     return Task(
         id=last_id,
@@ -25,27 +23,27 @@ def add_task(task_create: TaskCreate) -> None:
 
 
 def delete_task(task_id: int) -> None:
-    db.delete_task(task_id)
+    connection.db.delete_task(task_id)
 
 
 def get_all_tasks() -> list[Task]:
-    rows = db.get_all_tasks()
+    rows = connection.db.get_all_tasks()
 
     return [_row_to_task(row) for row in rows]
 
 
 def get_task(task_id: int) -> Task | None:
-    row = db.get_task(task_id)
+    row = connection.db.get_task(task_id)
     if row:
         return _row_to_task(row)
     return None
 
 
 def get_priority_tasks(priority: int) -> list[Task]:
-    rows = db.get_priority_tasks(priority)
+    rows = connection.db.get_priority_tasks(priority)
     return [_row_to_task(row) for row in rows]
 
 
 def update_task(task_id: int, task_create: TaskCreate) -> Task:
-    db.update_task(task_id, task_create)
-    return _row_to_task(db.get_task(task_id))
+    connection.db.update_task(task_id, task_create)
+    return _row_to_task(connection.db.get_task(task_id))
